@@ -1,16 +1,30 @@
-package printscript.runner.service
+package printscript.runner.domains.test
 
 import cli.Config
 import consumer.*
 import interpreter.Interpret
+import printscript.runner.domains.test.dto.TestResultDTO
+import printscript.runner.domains.test.dto.TestResultState
 import java.io.ByteArrayInputStream
 import java.io.InputStream
 
-class Interpreter{
-    fun interpret(code: String, version: String,inputs: List<String>): String {
-        val input = stringToInputStream(code)
-        val interpreter = initializeInterpreter(input, version)
-        return runConsumer(interpreter, inputs)
+class Interpreter {
+
+
+    fun interpret(code: String, version: String, inputs: List<String>, output: String): TestResultDTO {
+        val filteredOutput = output.replace("\n", "")
+        return if (version == "1.0" || version == "1.1") {
+            val input = stringToInputStream(code)
+            val interpreter = initializeInterpreter(input, version)
+            val res = runConsumer(interpreter, inputs)
+            if (res.message.replace("\n", "") == filteredOutput) {
+                TestResultDTO(TestResultState.SUCCESS, res.message)
+            } else {
+                TestResultDTO(TestResultState.FAILURE, "Expected ${output}, but was ${res.message}")
+            }
+        } else {
+            TestResultDTO(TestResultState.FAILURE, "incompatible version exception")
+        }
     }
 
     private fun stringToInputStream(input: String): InputStream {
@@ -22,7 +36,7 @@ class Interpreter{
         return Interpret(Config().generateASTNproviderInputStream(version, input))
     }
 
-    private fun runConsumer(consumer: ASTNodeConsumerInterpreter, inputs: List<String>): String {
+    private fun runConsumer(consumer: ASTNodeConsumerInterpreter, inputs: List<String>): TestResultDTO {
         var result = consumer.consume()
         var inter = ""
         val lista = inputs.iterator()
@@ -33,24 +47,26 @@ class Interpreter{
                         inter += "${result.msg}\n"
                     }
                 }
+
                 is ConsumerResponseError -> {
                     inter += "${result.error}\n"
-                    return inter
+                    return TestResultDTO(TestResultState.FAILURE, inter)
                 }
+
                 is ConsumerResponseImput -> {
                     inter += "${result.msg}\n"
-                    if (lista.hasNext()){
+                    if (lista.hasNext()) {
                         val input = lista.next()
                         consumer.getValue(input)
-                    } else  {
+                    } else {
                         inter += "Input not found Exception"
-                        return inter
+                        return TestResultDTO(TestResultState.FAILURE, inter)
                     }
                 }
             }
             result = consumer.consume()
         }
-        return inter
+        return TestResultDTO(TestResultState.SUCCESS, inter)
     }
 }
 
