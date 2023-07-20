@@ -23,6 +23,9 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build with gradle
+        env:
+          USERNAME: ${{ secrets.USERNAME }}
+          TOKEN: ${{ secrets.TOKEN }}
         run: ./gradlew build --info
 
       - name: Set up Docker Buildx
