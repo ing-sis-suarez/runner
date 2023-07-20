@@ -16,20 +16,8 @@ class SampleFormaterConsumer @Autowired constructor(
     redis: RedisTemplate<String, String>,
     @Value("\${redis.stream.request_formater_key}") streamKey: String,
     @Value("\${redis.groups.format}") groupId: String,
+    @Autowired val formaterService: FormaterService
 ) : RedisStreamConsumer<FormatRequestEvent>(streamKey, groupId, redis) {
-
-    @Autowired
-    private lateinit var formaterService: FormaterService
-
-
-    constructor(
-        redis: RedisTemplate<String, String>,
-        @Value("\${redis.stream.request_formater_key}") streamKey: String,
-        @Value("\${redis.groups.format}") groupId: String,
-        formaterService: FormaterService
-    ) : this(redis, streamKey, groupId) {
-        this.formaterService = formaterService
-    }
 
     init {
         subscription()
