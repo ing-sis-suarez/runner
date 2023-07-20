@@ -1,0 +1,72 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+plugins {
+    id 'org.springframework.boot' version '2.7.0'
+    id 'io.spring.dependency-management' version '1.1.0'
+    id 'org.jetbrains.kotlin.jvm' version '1.7.22'
+    id 'org.jetbrains.kotlin.plugin.spring' version '1.7.22'
+    id 'org.jetbrains.kotlin.plugin.jpa' version '1.7.22'
+}
+
+group = 'printscript'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    sourceCompatibility = '17'
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        name = "Spring-mvc-redis-streams"
+        url = uri("https://maven.pkg.github.com/Snippet-Searcher/spring-mvc-redis-streams")
+        credentials {
+            username = System.getenv("USERNAME")
+            password = System.getenv("TOKEN")
+        }
+    }
+    maven {
+        name = "GitHubPackages"
+        url = uri("https://maven.pkg.github.com/ing-sis-org/PrintScript")
+        credentials {
+            username = System.getenv("USERNAME")
+            password = System.getenv("TOKEN")
+        }
+    }
+}
+
+dependencies {
+    implementation "org.springframework.boot:spring-boot-starter-data-redis"
+    implementation "spring-mvc-redis-streams:lib:0.0.1-SNAPSHOT"
+    implementation 'org.springframework.metrics:spring-metrics:0.5.1.RELEASE'
+    implementation 'com.netflix.spectator:spectator-api:0.55.0'
+    implementation 'org.springframework:spring-aspects'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
+    implementation 'org.jetbrains.kotlin:kotlin-reflect'
+    runtimeOnly 'org.postgresql:postgresql'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+
+    implementation 'printscript:astn:1.1.3-SNAPSHOT'
+    implementation 'printscript:formater:1.1.4-SNAPSHOT'
+    implementation 'printscript:cli:1.1.4-SNAPSHOT'
+    implementation 'printscript:lexer:1.1.4-SNAPSHOT'
+    implementation 'printscript:parser:1.1.3-SNAPSHOT'
+    implementation 'printscript:interpreter:1.1.3-SNAPSHOT'
+    implementation 'printscript:token:1.1.3-SNAPSHOT'
+    implementation 'printscript:utilities:1.1.3-SNAPSHOT'
+    implementation 'printscript:sca:1.1.3-SNAPSHOT'
+}
+
+tasks.withType(KotlinCompile) {
+    kotlinOptions {
+        freeCompilerArgs = ['-Xjsr305=strict']
+        jvmTarget = '17'
+    }
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
