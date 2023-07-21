@@ -48,3 +48,25 @@ jobs:
             "TOKEN=${{ secrets.TOKEN }}"
           tags: |
             ghcr.io/ing-sis-suarez/runner-dev:latest
+
+
+  run_remote_script:
+    name: Run remote script
+    needs: push_to_registry
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Create SSH key
+        run: |
+          mkdir -p ~/.ssh/
+          echo "$SSH_PRIVATE_KEY" > ../private.key
+          chmod 600 ../private.key
+          ssh-keyscan ${{secrets.SSH_HOST_DEV}} >> ~/.ssh/known_hosts
+        env:
+          SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
+
+      - name: Run script on remote machine
+        run: |
+          ssh -v -i ../private.key jorge@${{secrets.SSH_HOST_DEV}} "~/deploy.sh runner"
