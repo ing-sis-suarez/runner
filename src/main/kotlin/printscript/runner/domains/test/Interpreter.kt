@@ -53,7 +53,7 @@ class Interpreter {
                     return TestResultDTO(TestResultState.FAILURE, inter)
                 }
 
-                is ConsumerResponseImput -> {
+                is ConsumerResponseInput -> {
                     inter += "${result.msg}\n"
                     if (lista.hasNext()) {
                         val input = lista.next()
