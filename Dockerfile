@@ -1,4 +1,4 @@
-FROM gradle:7.6.1-jdk17
+FROM gradle:7.6.1-jdk15
 COPY . /home/gradle/src
 WORKDIR /home/gradle/src
 
