@@ -28,8 +28,8 @@ class Linter {
 
     private fun initializeSCA(input: InputStream, config: LinterRulesDTO): ASTNodeConsumer {
         val case = when(config.caseConvention){
-            CaseConvention.CAMEL_CASE -> "CamelCaseLint"
-            CaseConvention.SNAKE_CASE -> "SnakeCaseLint"
+            CaseConvention.CAMEL_CASE -> "CamelCaseFormat"
+            CaseConvention.SNAKE_CASE -> "SnakeCaseFormat"
         }
         val map = mutableMapOf(
             case to true,

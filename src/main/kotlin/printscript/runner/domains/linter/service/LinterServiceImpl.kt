@@ -18,7 +18,7 @@ class LinterServiceImpl : LinterService {
     }
 
     override fun getRules(token: String, resourceId: UUID): LinterRulesDTO {
-        val url = System.getenv("ROLES_URI") + "/role?resourceId=$resourceId&resourceType=linter_rules"
+        val url = System.getenv("SNIPPET_MANAGER_URI") + "/linter_rules"
         val template = RestTemplate()
         val headers = HttpHeaders()
         prepareHeaders(headers, token)

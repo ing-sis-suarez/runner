@@ -36,6 +36,7 @@ class SampleLinterConsumer @Autowired constructor(
     }
 
     override fun onMessage(record: ObjectRecord<String, LintRequestEvent>) {
+        println(record.value.lintRulesId)
         val (snippetId, lintRulesId, token) = record.value
         val rules = linterService.getRules(token, lintRulesId)
         val snippetDTO = linterService.getSnippetContent(token, snippetId)
