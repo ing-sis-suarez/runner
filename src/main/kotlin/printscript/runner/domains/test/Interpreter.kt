@@ -37,36 +37,40 @@ class Interpreter {
     }
 
     private fun runConsumer(consumer: ASTNodeConsumerInterpreter, inputs: List<String>): TestResultDTO {
-        var result = consumer.consume()
-        var inter = ""
-        val lista = inputs.iterator()
-        while (result !is ConsumerResponseEnd) {
-            when (result) {
-                is ConsumerResponseSuccess -> {
-                    if (result.msg != null) {
-                        inter += "${result.msg}\n"
+        try {
+            var result = consumer.consume()
+            var inter = ""
+            val lista = inputs.iterator()
+            while (result !is ConsumerResponseEnd) {
+                when (result) {
+                    is ConsumerResponseSuccess -> {
+                        if (result.msg != null) {
+                            inter += "${result.msg}\n"
+                        }
                     }
-                }
 
-                is ConsumerResponseError -> {
-                    inter += "${result.error}\n"
-                    return TestResultDTO(TestResultState.FAILURE, inter)
-                }
-
-                is ConsumerResponseInput -> {
-                    inter += "${result.msg}\n"
-                    if (lista.hasNext()) {
-                        val input = lista.next()
-                        consumer.getValue(input)
-                    } else {
-                        inter += "Input not found Exception"
+                    is ConsumerResponseError -> {
+                        inter += "${result.error}\n"
                         return TestResultDTO(TestResultState.FAILURE, inter)
                     }
+
+                    is ConsumerResponseInput -> {
+                        inter += "${result.msg}\n"
+                        if (lista.hasNext()) {
+                            val input = lista.next()
+                            consumer.getValue(input)
+                        } else {
+                            inter += "Input not found Exception"
+                            return TestResultDTO(TestResultState.FAILURE, inter)
+                        }
+                    }
                 }
+                result = consumer.consume()
             }
-            result = consumer.consume()
+            return TestResultDTO(TestResultState.SUCCESS, inter)
+        } catch (e: Exception) {
+            return TestResultDTO(TestResultState.FAILURE, e.message.toString())
         }
-        return TestResultDTO(TestResultState.SUCCESS, inter)
     }
 }
 
