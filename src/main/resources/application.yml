@@ -5,7 +5,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: https://dev-7qnoj6g0bvw3f2qs.us.auth0.com/
+          issuer-uri: https://prod-7qnoj6g0bvw3f2qs.us.auth0.com/
 
 logging:
   level:
