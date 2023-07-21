@@ -47,4 +47,4 @@ jobs:
             "USERNAME=${{ secrets.USERNAME }}"
             "TOKEN=${{ secrets.TOKEN }}"
           tags: |
-            ghcr.io/ing-sis-org/runner-dev:latest
+            ghcr.io/ing-sis-suarez/runner-dev:latest
